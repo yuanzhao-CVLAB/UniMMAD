@@ -33,14 +33,14 @@ fields, 12 modalities, and 66 classes.
 
 Note:  (a) Existing methods rely on specialized models tailored to individual modalities and classes. (b) The proposed UniMMAD model unifies multi-modal and multi-class anomaly detection tasks within a single framework. (c) Visual examples, with modalities highlighted in white, class names in yellow, and anomaly regions marked by red boxes.  (d) Overview of the fields, modalities, and classes encompassed by UniMMAD.
 
-## C-MoE Visualization
- <img src="imgs/Exp_CMoE.png" alt="Image 1" style="width: 56%;"  />
-
-Note: Activation frequency of each MoE-leader across different datasets, illustrating domain-specific expert selection.
 
 ## UniMMAD Framework
 ![UniMMAD](imgs/architecture.png)
 
+## C-MoE Visualization
+ <img src="imgs/Exp_CMoE.png" alt="Image 1" style="width: 50%;"  />
+
+Note: Activation frequency of each MoE-leader across different datasets, illustrating domain-specific expert selection.
 
 
 ## Quantitative Comparison for Super-Multi-Class
