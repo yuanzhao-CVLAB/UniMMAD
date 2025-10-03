@@ -59,7 +59,7 @@ Note:  Quantitative comparison on the MVTec-AD and VisA datasets under the super
 
 
 ## ToDo List
-- [ ] release pre-trained AdaptCLIP models
+- [ ] release pre-trained UniMMAD models
 - [ ] open testing code
 - [ ] open training code
 
