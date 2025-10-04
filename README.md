@@ -4,6 +4,11 @@
 > Official PyTorch Implementation of [UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection via MoE-Driven Feature Decompression]([https://www.arxiv.org/pdf/2505.09926](https://arxiv.org/pdf/2509.25934), 2025.
 
 
+## 🚀 TODO
+- [x] Release arXiv paper.
+- [ ] open training code
+- [ ] open testing code
+- [ ] release pre-trained UniMMAD Weights
 
 ## Introduction 
  UniMMAD, a unified framework for multi-modal and
@@ -58,10 +63,6 @@ Note: Activation frequency of each MoE-leader across different datasets, illustr
 Note:  Quantitative comparison on the MVTec-AD and VisA datasets under the super–multi-class setting with a resolution of $256 \times 256$, evaluated using image-level metrics ($\text{AUC}_I /\text{AP}_I / \text{MF1}_I$) and pixel-level metrics (  $\text{AUC}_P /\text{MF1}_P / \text{AUPRO}$).
 
 
-## ToDo List
-- [ ] release pre-trained UniMMAD models
-- [ ] open testing code
-- [ ] open training code
 
 
 ## Star History
