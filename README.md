@@ -50,7 +50,7 @@ Note: Activation frequency of each MoE-leader across different datasets, illustr
 
 ## Quantitative Comparison for Super-Multi-Class
 
-| Method ↓            | MVTec-AD Image-level | MVTec-AD Pixel-level | VisA Image-level | VisA Pixel-level |
+| Method             | MVTec-AD Image-level | MVTec-AD Pixel-level | VisA Image-level | VisA Pixel-level |
 |----------------------|-----------------------|-----------------------|------------------|------------------|
 | RD  | 95.8 / 97.8 / 95.0   | 95.1 / 51.5 / 90.7   | 88.4 / 89.9 / 86.7 | 96.8 / 33.3 / 38.7 |
 | UniAD | 95.0 / 97.7 / 94.5   | 95.8 / 46.8 / 90.0   | 90.7 / 92.2 / 86.9 | 98.3 / 32.1 / 38.1 |
