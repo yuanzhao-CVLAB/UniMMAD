@@ -1,6 +1,6 @@
 <div align="center">
  
-<h1 style="font-size: 12px;">UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection </br> via MoE-Driven Feature Decompression</h1>
+## UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection </br> via MoE-Driven Feature Decompression
 
 
 ### CVPR 2026 
