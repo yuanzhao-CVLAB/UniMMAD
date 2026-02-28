@@ -1,6 +1,28 @@
-# UniMMAD
+<div align="center">
 
-> Official PyTorch Implementation of [Complementary Prototype Mapping for Efficient Multimodal Anomaly Detection]([https://www.arxiv.org/pdf/2505.09926](https://arxiv.org/pdf/2509.25934), 2025.
+# UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection via MoE-Driven Feature Decompression
+
+### CVPR 2026 
+[![arXiv](https://img.shields.io/badge/arXiv-2509.25934-b31b1b.svg?style=plastic)](https://arxiv.org/abs/2509.25934) [![CVF](https://img.shields.io/badge/CVPR-Paper-b4c7e7.svg?style=plastic)](https://arxiv.org/abs/2509.25934)
+
+</div>
+
+
+
+PyTorch Implementation of CVPR 2026
+"UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection via MoE-Driven Feature Decompression". The first unified multi-modal and multi-class UAD model !!!
+
+- **Give me a ⭐️ if you like it.**
+
+- This project is released under **Apache-2.0 License**. If your method is based on UniMMAD, please acknowledge it in your work (papers, products, patents, competitions, etc.), preferably as a "Preliminary" section.
+
+
+
+## News
+ 
+ - _02.2026_: Accepted by CVPR 2026🎉
+ 
+ - _09.2025_: We have released the arXiv paper of UniMMAD v1, link:[https://arxiv.org/abs/2405.14325](https://arxiv.org/abs/2405.14325) .😛
 
 
 ## 🚀 TODO
