@@ -8,16 +8,12 @@
 
 </div>
 
-
-
 PyTorch Implementation of CVPR 2026
 "UniMMAD: Unified Multi-Modal and Multi-Class Anomaly Detection via MoE-Driven Feature Decompression". The first unified multi-modal and multi-class UAD model !!!
 
-- **Give me a ⭐️ if you like it.**
+- **If you find this work useful, please star ⭐ the repo!**
 
-- This project is released under **Apache-2.0 License**. If your method is based on UniMMAD, please acknowledge it in your work (papers, products, patents, competitions, etc.), preferably as a "Preliminary" section.
-
-
+- This project is released under **Apache-2.0 License**. 
 
 ## News
  
