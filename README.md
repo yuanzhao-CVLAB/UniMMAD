@@ -19,7 +19,7 @@ PyTorch Implementation of CVPR 2026
  
  - _02.2026_: Accepted by CVPR 2026🎉
  
- - _09.2025_: We have released the arXiv paper of UniMMAD v1, link:[https://arxiv.org/abs/2405.14325](https://arxiv.org/abs/2405.14325) .😛
+ - _09.2025_: We have released the arXiv paper of UniMMAD v1, link:[https://arxiv.org/abs/2509.25934](https://arxiv.org/abs/2509.25934) .😛
 
 
 ## 🚀 TODO
