@@ -17,6 +17,8 @@ PyTorch Implementation of CVPR 2026
 
 ## News
  
+ - _03.2026_: We have released the dataset, training/evaluation code, and pre-trained weights..🎉
+   
  - _02.2026_: Accepted by CVPR 2026🎉
  
  - _09.2025_: We have released the arXiv paper of UniMMAD v1, link:[https://arxiv.org/abs/2509.25934](https://arxiv.org/abs/2509.25934) .😛
@@ -24,9 +26,9 @@ PyTorch Implementation of CVPR 2026
 
 ## 🚀 TODO
 - [x] Release arXiv paper.
-- [ ] open training code
-- [ ] open testing code
-- [ ] release pre-trained UniMMAD Weights
+- [x] open training code
+- [x] open testing code
+- [x] release pre-trained UniMMAD Weights
 
 ## Introduction 
  UniMMAD, a unified framework for multi-modal and
@@ -57,29 +59,86 @@ fields, 12 modalities, and 66 classes.
 Note:  (a) Existing methods rely on specialized models tailored to individual modalities and classes. (b) The proposed UniMMAD model unifies multi-modal and multi-class anomaly detection tasks within a single framework. (c) Visual examples, with modalities highlighted in white, class names in yellow, and anomaly regions marked by red boxes.  (d) Overview of the fields, modalities, and classes encompassed by UniMMAD.
 
 
-## UniMMAD Framework
-![UniMMAD](imgs/architecture.png)
-
-## C-MoE Visualization
- <img src="imgs/Exp_CMoE.png" alt="Image 1" style="width: 50%;"  />
-
-Note: Activation frequency of each MoE-leader across different datasets, illustrating domain-specific expert selection.
+## Get Started 
 
 
-## Quantitative Comparison for Super-Multi-Class
 
-| Methods             | MVTec-AD Image-level | MVTec-AD Pixel-level | VisA Image-level | VisA Pixel-level |
-|----------------------|-----------------------|-----------------------|------------------|------------------|
-| RD  | 95.8 / 97.8 / 95.0   | 95.1 / 51.5 / 90.7   | 88.4 / 89.9 / 86.7 | 96.8 /  38.7 / 87.0 |
-| UniAD | 95.0 / 97.7 / 94.5   | 95.8 / 46.8 / 90.0   | 90.7 / 92.2 / 86.9 | 98.3 / 38.1 / 88.8 |
-| ViTAD | 97.7 / 99.3 / 97.5   | 95.9 / 49.8 / 89.4   | 89.1 / 90.4 / 85.4 | 98.0 / 39.8 / 84.2 |
-| MambaAD  | 94.7 / 97.7 / 94.5   | 96.3 / 51.5 / 90.5   | 90.2 / 91.4 / 87.5 | 97.7 / 39.4 / 87.9|
-| INP-Former  | 99.2 / 99.5 / 98.6 | **98.2 / 60.7 / 93.8** | 95.2 / 95.7 / 91.9| 98.8 /  44.4 / **91.5**|
-| **Ours**             | **99.4 / 99.6 / 98.7** | 98.1 / 60.2 / 93.0 | **95.5 / 96.2 / 92.4** | **98.9 / 47.2**  / 91.3|
+### Environment 
+
+```bash
+
+pip install -r requirements.txt
+
+```
 
 
-Note:  Quantitative comparison on the MVTec-AD and VisA datasets under the super–multi-class setting with a resolution of $256 \times 256$, evaluated using image-level metrics ($\text{AUC}_I /\text{AP}_I / \text{MF1}_I$) and pixel-level metrics (  $\text{AUC}_P /\text{MF1}_P / \text{AUPRO}$).
 
+
+
+### Train
+
+1. **Prepare Data**: Download the dataset and define your root directory path.
+
+2. **Encoder Weights**: [Download](https://drive.google.com/file/d/1hJ8Ez4lqvzN4GPhiCEl0cm1nd-rWyzAN/view?usp=sharing) the WideResNet encoder weights and place them in the checkpoints folder (e.g., checkpoints/wide_resnet50_2.safetensors).
+
+3. **Launch Training**:
+
+```bash
+
+accelerate launch main.py --mode train 
+
+```
+
+
+
+### Test
+
+1. **Model Weights**: Download the trained model weights and provide the path to checkpoint_path.
+
+```bash
+
+accelerate launch main.py --mode eval --resume checkpoint_path
+
+```
+
+Note: You can configure specific classes for training and testing in mmad_datasets/datasets_classes.
+
+### Data
+
+
+
+```
+
+root
+
+|-- EyePre
+
+|-- mvtec3d
+
+|-- MulSen_AD
+
+|-- BratsAD1K
+
+|-- HyperAD
+
+|-- LiverAD
+
+|-- RetinaAD
+
+```
+
+
+
+
+
+
+## 📁 datasets & checkpoints Links
+
+
+| Item | Google Drive | HuggingFace |
+|------|--------------|--------------|
+| Datasets | [Download](https://drive.google.com/file/d/1GNnRRkibWFLEPucJoivILvtRMb0Bgbvo/view?usp=sharing) | Coming Soon |
+| Model Weights | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) | Coming Soon |
 
 
 
