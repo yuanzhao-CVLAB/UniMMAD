@@ -1,0 +1,14 @@
+{
+  "img_size":  [ 256,256],
+  "EPOCHS":200,
+  "weight_decay": 1e-5,
+  "dropout":0,
+  "data_root":"data/all_meta.json",
+  "root":"/home/zhaoyuan/data",
+  "data_loader_type":"pil",
+  "data_loader_type_target":"pil_L",
+  "amp":"bf16",
+  "dataset_weight":{"EyePre": 0.5, "mvtec3d": 1,"mvtec": 1,   "visa1cls": 1, "AD": 1, "BratsAD1K": 10, "RetinaAD": 1, "LiverAD": 10, "HyperAD": 1}
+}
+
+
