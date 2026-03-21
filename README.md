@@ -78,7 +78,7 @@ pip install -r requirements.txt
 
 ### Train
 
-1. **Prepare Data**: Download the dataset and define your root directory path.
+1. **Prepare Data**: Download the dataset and define your root directory path in the config.json.
 
 2. **Encoder Weights**: [Download](https://drive.google.com/file/d/1hJ8Ez4lqvzN4GPhiCEl0cm1nd-rWyzAN/view?usp=sharing) the WideResNet encoder weights and place them in the checkpoints folder (e.g., checkpoints/wide_resnet50_2.safetensors).
 
