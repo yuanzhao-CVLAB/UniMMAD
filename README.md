@@ -17,7 +17,7 @@ PyTorch Implementation of CVPR 2026
 
 ## News
  
- - _03.2026_: We have released the dataset, training/evaluation code, and pre-trained weights..🎉
+ - _03.2026_: We have released the dataset, training/evaluation code, and pre-trained weights.🎉
    
  - _02.2026_: Accepted by CVPR 2026🎉
  
@@ -138,7 +138,7 @@ root
 
 | Item | Datasets | Model Weights |
 |------|----------|---------------|
-| UniMMAD | Coming Soon | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) |
+| UniMMAD |  [Download](https://huggingface.co/datasets/zhaoyuan666/MMAD) | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) |
 
 
 
