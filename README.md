@@ -25,9 +25,10 @@ PyTorch Implementation of CVPR 2026
 
 
 ## 🚀 TODO
-- [x] Release arXiv paper.
+- [x] Release arXiv paper
 - [x] open training code
 - [x] open testing code
+- [x] release MMAD  Datasets
 - [x] release pre-trained UniMMAD Weights
 
 ## Introduction 
@@ -135,10 +136,9 @@ root
 ## 📁 datasets & checkpoints Links
 
 
-| Item | Google Drive | HuggingFace |
-|------|--------------|--------------|
-| Datasets | [Download](https://drive.google.com/file/d/1GNnRRkibWFLEPucJoivILvtRMb0Bgbvo/view?usp=sharing) | Coming Soon |
-| Model Weights | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) | Coming Soon |
+| Item | Datasets | Model Weights |
+|------|----------|---------------|
+| UniMMAD | Coming Soon | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) |
 
 
 
