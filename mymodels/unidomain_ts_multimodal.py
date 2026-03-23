@@ -1,20 +1,11 @@
 
 import timm
 from typing import Tuple, List, Dict, Optional
-
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 import numpy as np
-
-
-
-
-
-
-
 from mymodels.FCM import MultiScaleFusionWithEmbedding
 from mymodels.cmoe import C_MoE
 
@@ -61,7 +52,6 @@ class Pretrain_Encoder(nn.Module):
         return torch.stack(feat_list, dim=1).mean(dim=1)
 
 
-import os
 
 
 
@@ -143,24 +133,9 @@ class UniMMAD(object):
                 loss += temp
         return 3 * loss / len(a)
 
-    def extract_modality(self, tensor_data: torch.Tensor, specific_num: torch.Tensor, modal_index: int):
-        valid_mask = specific_num > modal_index  # 生成布尔掩码，表示哪些数据可取
-        indices = (torch.cumsum(specific_num, dim=0) - specific_num + modal_index)[valid_mask]
-        selected_tensors = tensor_data[indices.tolist()]
-
-        return selected_tensors if selected_tensors.numel() > 0 else None, valid_mask.tolist()
-
     def intermodal_mean(self, amap_np, eps=1e-8, k=2):
         return  np.sqrt((amap_np**2).sum(0,keepdims=True))
-        
 
-    def fill_back(slef, shape, filled_data: torch.Tensor, valid_mask: list):
-        if filled_data.shape[0] == shape[0]: return filled_data
-
-        output = torch.zeros(shape, device=filled_data.device)  # 初始化 (10,3,64,64) 大小的张量
-        valid_indices = [i for i, mask in enumerate(valid_mask) if mask]
-        output[valid_indices] = filled_data  # 将填充数据放回相应位置
-        return output
 
     def eval_step(self, batch, **kwargs):
         for modules in self.get_models()[1:]:
@@ -231,7 +206,7 @@ class UniMMAD(object):
         return loss, res_in, res_out
 
     def get_models(self):
-        trainable_layer = "self.general_multimodal_encoder,self.input_embedding,self.c_moes"  # ,self.res_bn,self.discriminators"#"self.norm_parameters
+        trainable_layer = "self.general_multimodal_encoder,self.input_embedding,self.c_moes"
         return (trainable_layer.split(","),
                 *eval(trainable_layer))
 

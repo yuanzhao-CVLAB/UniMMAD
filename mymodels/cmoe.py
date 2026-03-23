@@ -1,29 +1,11 @@
-import math
-import random
-import time
-
-import timm
-import torch
 from typing import Tuple, List, Dict, Optional
-
-from mymodels.RD_de_resnet import BasicBlock as UpBasicBlock
-from mymodels.RD_resnet import BasicBlock as DownBasicBlock
-# from mymodels.rd_multimodal import *
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-from collections import Counter
-from PIL import Image
-import numpy as np
-import cv2
 
 
 from mymodels.norm_and_act import conv1x1,conv3x3,norm_act
-from mymodels.FCM import MultiScaleFusionWithEmbedding
 
 
 # -----------------------------
@@ -97,8 +79,6 @@ class C_MoE(nn.Module):
 
         feat = torch.cat(outs, dim=1)  # [B,3E,H,W]
         feat = self.conv_out_first(feat)  # [B,E,H,W]
-        # anomaly_map = self.conv_out_second(feat)      # [B,1,H,W]
-        # prior_map   = self.prior_head(query)          # [B,1,H,W]
 
         lb_loss = sum(lb_losses)
         extra = {
@@ -133,7 +113,7 @@ def dynamic_conv_experts(values: torch.Tensor,
 # -----------------------------
 class NaiveGate(nn.Module):
     """
-    Input: gml (global mixed latent) [B, embed_dim]
+    Input: gml (global  latent features) [B, embed_dim]
     Output:
         idx:   [B, top_k]        top-k indices
         score: [B, top_k]        normalized to sum=1
@@ -218,15 +198,6 @@ class MiMoE(nn.Module):
         self.pre = nn.Sequential(conv1x1(embed_dim, embed_dim), norm_act(embed_dim, norm))
         self.post = nn.Sequential(conv1x1(2 * embed_dim, embed_dim), norm_act(embed_dim, norm))
 
-        # eval kernel cache
-        self.register_buffer("_cache_valid", torch.tensor(0, dtype=torch.uint8), persistent=False)
-        self._cached_idx = None
-        self._cached_kernels = None
-
-    def clear_cache(self):
-        self._cache_valid.zero_()
-        self._cached_idx = None
-        self._cached_kernels = None
 
     def _compose_routed_kernels(self, idx: torch.Tensor, expert_base: torch.Tensor) -> torch.Tensor:
         """
@@ -247,7 +218,7 @@ class MiMoE(nn.Module):
         return routed_k
 
     def forward(self, share: torch.Tensor, gml: torch.Tensor, expert_base: torch.Tensor,
-                temperature: Optional[float] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+                temperature: Optional[float] = None):
         """
         return:
             feat_out: [B,C,H,W]
@@ -264,22 +235,7 @@ class MiMoE(nn.Module):
 
         idx, score, lb = self.gate(gml)  # [B,K], [B,K], scalar
 
-        if not self.training and self._cache_valid.item() == 1 and self._cached_idx is not None:
-            if torch.equal(idx, self._cached_idx):
-                routed_k = self._cached_kernels
-            else:
-                routed_k = self._compose_routed_kernels(idx, expert_base)
-                self._cached_idx = idx.detach().clone()
-                self._cached_kernels = routed_k.detach()
-        else:
-            routed_k = self._compose_routed_kernels(idx, expert_base)
-            if not self.training:
-                self._cached_idx = idx.detach().clone()
-                self._cached_kernels = routed_k.detach()
-                self._cache_valid.fill_(1)
-
-        if temperature is not None:
-            self.gate.temperature = old_temp
+        routed_k = self._compose_routed_kernels(idx, expert_base)
 
         # concat fixed expert kernel
         fixed_k = self.soft_expert.unsqueeze(0).unsqueeze(1).expand(B, 1, -1, -1, -1, -1)  # [B,1,C,C,k,k]
