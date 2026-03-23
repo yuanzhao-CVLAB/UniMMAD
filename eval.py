@@ -118,6 +118,6 @@ def evalute(trainer,args,accelerator):
 
     col_names =  ["Objects", "I-Auroc", "I-AP", "I-F1max", "P-Auroc", "P-F1max", "AUPRO@30% ","P-AP",]
     pd_data = pd.DataFrame(logs, columns=col_names)
-    logger.info("\n"+tabulate(pd_data.values, tablefmt="pipe"))
+    logger.info("\n"+tabulate(pd_data.values, headers=col_names,tablefmt="pipe"))
 
     return  res
