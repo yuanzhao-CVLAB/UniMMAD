@@ -200,60 +200,24 @@ class UniMMAD(object):
 
         share_out = self.input_embedding(share_img)
         enc = self.general_multimodal_encoder[0](share_out)
+        #add inter-modal piror averages
         enc = self.merge_feature(enc,specimgs_out,B,cumindex)
         share_out, loss = self.general_multimodal_encoder[1](enc)
         share_out = [F.normalize(tensor, p=2, dim=1) for tensor in share_out]
         specimgs_out = [F.normalize(tensor, p=2, dim=1) for tensor in specimgs_out]
 
-        # 预计算每个模态的 batch 掩码和在 layer_spec_out 里的索引
-        B = specific_num.shape[0]
-        M = 4  # 最多 4 种模态
-        # 每个样本在拼接的 specific_imgs 里的起始位置
-        starts = torch.cumsum(specific_num, dim=0) - specific_num  # [B]
-        masks = [(specific_num > m) for m in range(M)]
-        idxs = [starts[masks[m]] + m for m in range(M)]
-        counts = [int(mask.sum()) for mask in masks]  # [N0,N1,N2,N3]
 
 
 
         ## layer-wise moe inference
         def moe_inference(C_MoE,layer_share_out,layer_spec_out,res_in,res_out):
-            # 1) 打包：把各模态的 share/t 连接为一个大 batch
-            share_packed = torch.cat(
-                [layer_share_out[masks[m]] for m in range(M) if counts[m] > 0], dim=0
-            )
-            t_packed = torch.cat(
-                [layer_spec_out[idxs[m]] for m in range(M) if counts[m] > 0], dim=0
-            )
-            # 2) MoE 前向
-            s_packed, loss = C_MoE(share_packed, t_packed,
-                                             class_name=batch['class_name'],
-                                             temperature=1, batch=batch)
-            total_loss.append(loss)
-
-            # 3) 拆分为各模态子批
-            non_zero_counts = [c for c in counts if c > 0]
-            s_chunks = list(torch.split(s_packed, non_zero_counts, dim=0))
-            t_chunks = list(torch.split(t_packed, non_zero_counts, dim=0))
-
-            # 4) 回填：用布尔掩码直接赋值（无需 fill_back）
-            cz = 0
-            for m in range(M):
-                if counts[m] == 0:
-                    continue
-                s_chunk = s_chunks[cz]
-                t_chunk = t_chunks[cz]
-                cz += 1
-
-                # 为该模态构造 [B,C,H,W] 的容器，并把选中样本位赋值
-                C, H, W = s_chunk.shape[1:]
-                s_full = layer_share_out.new_zeros((B, C, H, W))
-                t_full = layer_share_out.new_zeros((B, C, H, W))
-                s_full[masks[m]] = s_chunk
-                t_full[masks[m]] = t_chunk
-
-                res_out.append(s_full)
-                res_in.append(t_full)
+            for i in range(layer_spec_out.shape[0]):
+                p_i, loss = C_MoE(layer_share_out, layer_spec_out[i:i+1],
+                      class_name=batch['class_name'],
+                      temperature=1, batch=batch)
+                total_loss.append(loss)
+                res_out.append(p_i)
+                res_in.append(layer_spec_out[i])
                 
         res_in, res_out, total_loss = [], [], []
         for layer in range(3):
