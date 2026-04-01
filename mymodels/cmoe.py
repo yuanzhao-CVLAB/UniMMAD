@@ -56,8 +56,7 @@ class C_MoE(nn.Module):
         self.select_expert_dict = {}
 
     def forward(self, share: torch.Tensor, related: torch.Tensor,
-                class_name: Optional[List[str]] = None,
-                temperature: Optional[float] = None, batch=None):
+                temperature: Optional[float] = None):
         """
         share   : [B,Cs,H,W] from fused student backbone
         related : [B,Cr,H,W] from fused frozen backbone (or priors)

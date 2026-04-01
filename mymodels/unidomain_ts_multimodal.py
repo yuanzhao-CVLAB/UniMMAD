@@ -186,13 +186,16 @@ class UniMMAD(object):
 
         ## layer-wise moe inference
         def moe_inference(C_MoE,layer_share_out,layer_spec_out,res_in,res_out):
-            for i in range(layer_spec_out.shape[0]):
-                p_i, loss = C_MoE(layer_share_out, layer_spec_out[i:i+1],
-                      class_name=batch['class_name'],
-                      temperature=1, batch=batch)
-                total_loss.append(loss)
-                res_out.append(p_i)
-                res_in.append(layer_spec_out[i])
+            B = layer_share_out.shape[0]
+            for b in range(B):
+                for specific_index in range(cumindex[b],cumindex[b+1]):
+                    gen_f = layer_share_out[b].unsqueeze(0)
+                    prior_u_i = layer_spec_out[specific_index].unsqueeze(0)
+                    p_i, moe_loss = C_MoE(gen_f, prior_u_i,
+                          temperature=1)
+                    total_loss.append(moe_loss)
+                    res_out.append(p_i)
+                    res_in.append(prior_u_i)
                 
         res_in, res_out, total_loss = [], [], []
         for layer in range(3):
