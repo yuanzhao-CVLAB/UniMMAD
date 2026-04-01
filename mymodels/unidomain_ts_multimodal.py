@@ -183,25 +183,71 @@ class UniMMAD(object):
 
 
 
-
         ## layer-wise moe inference
-        def moe_inference(C_MoE,layer_share_out,layer_spec_out,res_in,res_out):
+        ## Same functionality as moe_inference function with faster training.
+        def faster_moe_inference(C_MoE, layer_share_out, layer_spec_out, res_in, res_out):
+            # 预计算每个模态的 batch 掩码和在 layer_spec_out 里的索引
+            B = specific_num.shape[0]
+            M = 4  # 最多 4 种模态
+            # 每个样本在拼接的 specific_imgs 里的起始位置
+            starts = torch.cumsum(specific_num, dim=0) - specific_num  # [B]
+            masks = [(specific_num > m) for m in range(M)]
+            idxs = [starts[masks[m]] + m for m in range(M)]
+            counts = [int(mask.sum()) for mask in masks]  # [N0,N1,N2,N3]
+
+
+            # 1) 打包：把各模态的 share/t 连接为一个大 batch
+            gen_packed = torch.cat(
+                [layer_share_out[masks[m]] for m in range(M) if counts[m] > 0], dim=0
+            )
+            u_packed = torch.cat(
+                [layer_spec_out[idxs[m]] for m in range(M) if counts[m] > 0], dim=0
+            )
+            # 2) MoE 前向
+            p_packed, loss = C_MoE(gen_packed, u_packed,temperature=1)
+            total_loss.append(loss)
+
+            # 3) 拆分为各模态子批
+            non_zero_counts = [c for c in counts if c > 0]
+            p_chunks = list(torch.split(p_packed, non_zero_counts, dim=0))
+            u_chunks = list(torch.split(u_packed, non_zero_counts, dim=0))
+
+            # 4) 回填：用布尔掩码直接赋值（无需 fill_back）
+            cz = 0
+            for m in range(M):
+                if counts[m] == 0:
+                    continue
+                p_chunk = p_chunks[cz]
+                u_chunk = u_chunks[cz]
+                cz += 1
+
+                # 为该模态构造 [B,C,H,W] 的容器，并把选中样本位赋值
+                C, H, W = p_chunk.shape[1:]
+                p_full = layer_share_out.new_zeros((B, C, H, W))
+                u_full = layer_share_out.new_zeros((B, C, H, W))
+                p_full[masks[m]] = p_chunk
+                u_full[masks[m]] = u_chunk
+
+                res_out.append(p_full)
+                res_in.append(u_full)
+
+        ## Better Readability. Same functionality as faster_moe_inference function
+        def moe_inference(C_MoE, layer_share_out, layer_spec_out, res_in, res_out):
             B = layer_share_out.shape[0]
             for b in range(B):
-                for specific_index in range(cumindex[b],cumindex[b+1]):
+                for specific_index in range(cumindex[b], cumindex[b + 1]):
                     gen_f = layer_share_out[b].unsqueeze(0)
                     prior_u_i = layer_spec_out[specific_index].unsqueeze(0)
                     p_i, moe_loss = C_MoE(gen_f, prior_u_i,
-                          temperature=1)
+                                          temperature=1)
                     total_loss.append(moe_loss)
                     res_out.append(p_i)
                     res_in.append(prior_u_i)
-                
         res_in, res_out, total_loss = [], [], []
         for layer in range(3):
             layer_spec_out = specimgs_out[layer]  # [sum(specific_num), C, H, W]
             layer_share_out = share_out[layer]  # [B, C, H, W]
-            moe_inference(self.c_moes[layer],layer_share_out, layer_spec_out,res_in,res_out)
+            faster_moe_inference(self.c_moes[layer],layer_share_out, layer_spec_out,res_in,res_out)
 
 
         loss = torch.stack(total_loss).mean()
