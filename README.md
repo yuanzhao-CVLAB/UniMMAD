@@ -132,7 +132,7 @@ root
 
 
 ## Metric
-We use the evaluation toolkit from [PyADMetric_EvalToolkit](https://github.com/yuanzhao-CVLAB/PyADMetric_EvalToolkit), which supports AUROC, AUPR, AP, AUPRO, and F1-max. It leverages GPU acceleration, achieving a 4.25× speedup over the [ADer](https://github.com/zhangzjn/ADer) repository.
+We use the evaluation toolkit from [PyADMetric_EvalToolkit](https://github.com/yuanzhao-CVLAB/PyADMetric_EvalToolkit), which supports AUROC, AUPR, AP, AUPRO, and F1-max. It leverages GPU acceleration, achieving a  real-time evalution.
 
 ## 📁 datasets & checkpoints Links
 
