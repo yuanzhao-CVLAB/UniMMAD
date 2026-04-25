@@ -117,6 +117,7 @@ class UniMMAD(object):
         return anomaly_map
 
     def loss_fucntion(self, a, b, weight=None, gamma=2.0, reduction="mean"):
+
         cos_loss = torch.nn.CosineSimilarity(dim=1)
         loss = 0
         for item in range(len(a)):
@@ -221,15 +222,11 @@ class UniMMAD(object):
                 u_chunk = u_chunks[cz]
                 cz += 1
 
-                # 为该模态构造 [B,C,H,W] 的容器，并把选中样本位赋值
-                C, H, W = p_chunk.shape[1:]
-                p_full = layer_share_out.new_zeros((B, C, H, W))
-                u_full = layer_share_out.new_zeros((B, C, H, W))
-                p_full[masks[m]] = p_chunk
-                u_full[masks[m]] = u_chunk
+                u_chunk = u_chunk.chunk(u_chunk.shape[0],dim = 0)
+                p_chunk = p_chunk.chunk(p_chunk.shape[0],dim = 0)
+                res_in.extend(u_chunk)
+                res_out.extend(p_chunk)
 
-                res_out.append(p_full)
-                res_in.append(u_full)
 
         ## Better Readability. Same functionality as faster_moe_inference function
         def moe_inference(C_MoE, layer_share_out, layer_spec_out, res_in, res_out):

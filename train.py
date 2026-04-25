@@ -95,6 +95,7 @@ def train(args,accelerator):
     model_parameters  = load_parameters(args,names, models)
     logger.info(f'model_parameters: {sum([sum(p.numel() for p in parameters) for parameters in model_parameters] )/1e6}M')
     optimizer_model = optim.Adam([{"params":chain(*model_parameters ),"lr":args['lr'],"momentum":0.9,},                                ])
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer_model, T_max=args['EPOCHS'])
 
     tqdm_epoch = range(int(args["resume"].split(os.sep)[-1].split("_")[-1])+1 if args["resume"]!="none" else 0, args['EPOCHS'])
     (*models,trainer,training_dataset_loader) = accelerator.prepare(*models,trainer,training_dataset_loader)
@@ -119,3 +120,4 @@ def train(args,accelerator):
 
         if (epoch + 1) % args["print_bar_step"] == 0 or (epoch + 1)==args["EPOCHS"]:
             evalute(trainer,args, accelerator)
+        scheduler.step()
