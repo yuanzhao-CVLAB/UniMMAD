@@ -252,7 +252,7 @@ class UniDataset(Dataset):
         share_img_tensors = torch.zeros((4, self.imgsize, self.imgsize))
 
         share_img, specific_modality = self.get_imgs(img_paths, img_types)
-
+        share_img_tensors[:share_img.shape[0]] = share_img
 
         modality_num = len(specific_modality)
 

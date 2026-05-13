@@ -3,10 +3,6 @@ import glob
 import os
 import sys
 # 设置环境变量
-os.environ['NCCL_P2P_DISABLE'] = '1'
-os.environ['NCCL_IB_DISABLE'] = '1'
-os.environ['http_proxy'] = "http://127.0.0.1:7890"
-os.environ['https_proxy'] = "http://127.0.0.1:7890"
 from random import seed
 import json
 from collections import defaultdict
