@@ -138,9 +138,9 @@ We use the evaluation toolkit from [PyADMetric_EvalToolkit](https://github.com/y
 ## 📁 datasets & checkpoints Links
 
 
-| Item | Datasets | Model Weights |
+| Item | Datasets |  Model Weights (2026.4) |
 |------|----------|---------------|
-| UniMMAD |  [Download](https://huggingface.co/datasets/zhaoyuan666/MMAD) | [Download](https://drive.google.com/file/d/16f4ZDUzIJRtpGd_9WvIt-ZnTIuE5wKWq/view?usp=sharing) |
+| UniMMAD |  [Download](https://huggingface.co/datasets/zhaoyuan666/MMAD) | [Download](https://drive.google.com/file/d/1Y_nAnol-BdAusm5TFqmVCtycBG_yjEsy/view?usp=sharing) |
 
 
 
