@@ -212,7 +212,7 @@ class UniDataset(Dataset):
         elif typ.lower() == "gray":
             img = Image.open(os.path.join(self.root, path)).convert('RGB')
             img = self.image_transforms(img)
-            return img.mean(0, keepdim=True), img
+            return img, img
         elif typ.lower() == "depth":
             sample = np.load(os.path.join(self.root, path))
             depth = sample[:, :, 0]
@@ -221,14 +221,14 @@ class UniDataset(Dataset):
             depth = fg * depth + (1 - fg) * mean_fg
             depth = (depth - mean_fg) * 100
             depth = self.transform(depth, self.imgsize, binary=False)
-            return depth, depth.repeat(3, 1, 1)
+            return depth.repeat(3, 1, 1), depth.repeat(3, 1, 1)
         elif typ.lower() == "wofg_depth":
             sample = np.load(os.path.join(self.root, path))
             depth = sample[:, :, 0]
             mean_fg = depth.mean()
             depth = (depth - mean_fg) * 100
             depth = self.transform(depth, self.imgsize, binary=False)
-            return depth, depth.repeat(3, 1, 1)
+            return depth.repeat(3, 1, 1), depth.repeat(3, 1, 1)
         else:
             raise Exception(f'invalid type:{typ}')
 
@@ -249,7 +249,7 @@ class UniDataset(Dataset):
                                                                                           data['anomaly'])
 
         modality_index = torch.tensor([0,0,0,0])
-        share_img_tensors = torch.zeros((4, self.imgsize, self.imgsize))
+        share_img_tensors = torch.zeros((12, self.imgsize, self.imgsize))
 
         share_img, specific_modality = self.get_imgs(img_paths, img_types)
         share_img_tensors[:share_img.shape[0]] = share_img

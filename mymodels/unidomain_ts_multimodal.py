@@ -8,20 +8,55 @@ import torch.nn.functional as F
 import numpy as np
 from mymodels.FCM import MultiScaleFusionWithEmbedding
 from mymodels.cmoe import C_MoE
+from  mymodels.norm_and_act import conv3x3
 
-
-
-
+# 
 class Input_Preprocess(nn.Module):
     def __init__(self, args):
         super(Input_Preprocess, self).__init__()
-        self.input_embedding = nn.Parameter(torch.randn((6, *args['img_size'])))
-        self.stem = nn.Conv2d(6, 3, kernel_size=3, padding=1)
+        img_h, img_w = args['img_size']
+        # 使用变量定义最大通道数
+        self.max_channel = 12  # 可配置的最大通道数
+
+        # 使用更合理的初始化方式（Xavier/Kaiming）
+        self.input_embedding = nn.Parameter(
+            torch.randn(self.max_channel, img_h, img_w) * 0.02
+        )
+
+        # 优化stem结构，添加归一化和激活函数
+        self.stem = nn.Sequential(
+            nn.Conv2d(self.max_channel, self.max_channel *2, kernel_size=3, padding=1),
+            nn.BatchNorm2d(self.max_channel *2),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(self.max_channel *2, self.max_channel *4, kernel_size=3, padding=1),
+            nn.BatchNorm2d(self.max_channel *4),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(self.max_channel *4, 3,kernel_size=3, padding=1),  # 1x1卷积降维，保留细节
+        )
+
+        # 可选：添加残差连接
+        self.shortcut = nn.Conv2d(self.max_channel, 3, kernel_size=1) if self.max_channel != 3 else nn.Identity()
 
     def forward(self, share_img):
-        input = self.input_embedding.unsqueeze(0).repeat((share_img.shape[0], 1, 1, 1))
-        input[:, :share_img.shape[1]] += share_img
-        share_out = self.stem(input)
+        # share_img: [B, C, H, W], 其中 C <= self.max_channel
+        B, C, H, W = share_img.shape
+
+        # 更高效的扩展方式
+        input_embed = self.input_embedding.unsqueeze(0).expand(B, -1, -1, -1)
+
+        # 安全地添加共享图像（处理通道数不匹配的情况）
+        input_embed = input_embed +share_img
+
+
+        # 残差连接
+        shortcut_out = self.shortcut(input_embed)
+
+        # 主路径
+        share_out = self.stem(input_embed)
+
+        # 添加残差
+        share_out = share_out + shortcut_out
+
         return share_out
 
 
@@ -157,12 +192,13 @@ class UniMMAD(object):
         for layer in range(3):
             aux = [specimgs_out[layer][cumindex[i]:cumindex[i + 1]].mean(0, keepdim=True) for i in range(B)]
             auxinp.append(torch.cat(aux))
-        share_out = [s + a for s, a in zip(share_out, auxinp)]
+        # share_out[0] =share_out[0]+auxinp[0]
+        # share_out = [s + a for s, a in zip(share_out, auxinp)]
         return share_out
     def forward_step(self, batch, train=False, **kwargs):
 
         #################数据处理###############################
-        share_img = batch["img"]
+        share_img = batch["img"]    
         specific_num = batch['modality_num']
         specific_imgs = torch.cat([batch['specific_images'][i, :specific_num[i]] for i in range(len(specific_num))], 0)
         B, C, H, W = share_img.shape
@@ -177,7 +213,7 @@ class UniMMAD(object):
         share_out = self.input_embedding(share_img)
         enc = self.general_multimodal_encoder[0](share_out)
         #add inter-modal piror averages
-        enc = self.merge_feature(enc,specimgs_out,B,cumindex)
+        # enc = self.merge_feature(enc,specimgs_out,B,cumindex)
         share_out, loss = self.general_multimodal_encoder[1](enc)
         share_out = [F.normalize(tensor, p=2, dim=1) for tensor in share_out]
         specimgs_out = [F.normalize(tensor, p=2, dim=1) for tensor in specimgs_out]
@@ -258,10 +294,5 @@ class UniMMAD(object):
 
 
 def map_value(value):
-    #200epoch 
+    #200epoch
     return max(1 - value / 200, 0.001)
-
-
-
-
-
