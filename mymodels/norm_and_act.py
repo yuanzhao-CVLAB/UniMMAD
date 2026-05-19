@@ -20,14 +20,13 @@ def _choose_gn_groups(C: int) -> int:
     return 1
 def norm_act(C, kind="gn"):
     if kind == "ln2d":
-        return nn.Sequential(LayerNorm2d(C), nn.ReLU(inplace=True))
+        return nn.Sequential(InstanceNorm2d(C), nn.ReLU(inplace=True))
     groups = _choose_gn_groups(C)
     return nn.Sequential(nn.GroupNorm(groups, C), nn.ReLU(inplace=True))
 
 
 
-class LayerNorm2d(nn.Module):
-    """Channel-wise LayerNorm on 2D feature maps (B,C,H,W)."""
+class InstanceNorm2d(nn.Module):
 
     def __init__(self, num_channels: int, eps: float = 1e-6):
         super().__init__()
