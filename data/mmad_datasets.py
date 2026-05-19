@@ -249,7 +249,7 @@ class UniDataset(Dataset):
                                                                                           data['anomaly'])
 
         modality_index = torch.tensor([0,0,0,0])
-        share_img_tensors = torch.zeros((12, self.imgsize, self.imgsize))
+        share_img_tensors = torch.zeros((12, self.imgsize, self.imgsize)) 
 
         share_img, specific_modality = self.get_imgs(img_paths, img_types)
         share_img_tensors[:share_img.shape[0]] = share_img
