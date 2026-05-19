@@ -19,7 +19,7 @@ def _choose_gn_groups(C: int) -> int:
             return g
     return 1
 def norm_act(C, kind="gn"):
-    if kind == "ln2d":
+    if kind == "in2d":
         return nn.Sequential(InstanceNorm2d(C), nn.ReLU(inplace=True))
     groups = _choose_gn_groups(C)
     return nn.Sequential(nn.GroupNorm(groups, C), nn.ReLU(inplace=True))
