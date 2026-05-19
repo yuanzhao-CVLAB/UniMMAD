@@ -16,6 +16,7 @@ PyTorch Implementation of CVPR 2026
 - This project is released under **Apache-2.0 License**. 
 
 ## News
+  - _05.2026_: We improved Input_Preprocess and released latest weight(All_Datasets_Mean:I-AUROC 92.5->93.2 I-F1max 91.3->92.3).
   - _04.2026_: Code optimization: Added cosine annealing LR; fixed loss display in faster_moe_inference; restored lost share_img slicing assignment in UniDataset.
 
  - _03.2026_: We have released the dataset, training/evaluation code, and pre-trained weights.🎉
