@@ -7,7 +7,7 @@ from mymodels.RD_resnet import BasicBlock as DownBasicBlock
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mymodels.norm_and_act import LayerNorm2d,norm_act
+from mymodels.norm_and_act import norm_act
 from mymodels.RD_resnet import  wide_resnet50_2
 from mymodels.RD_de_resnet import  de_wide_resnet50_2
 from mymodels.norm_and_act import conv1x1,conv3x3
