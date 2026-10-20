@@ -27,7 +27,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_dir', type=str, default="outputs/UniMMAD", required=False,
                         help="Directory to save outputs (checkpoints, logs).")
-    parser.add_argument('--batchsize', type=int, default=10, required=False,
+    parser.add_argument('--batchsize', type=int, default=8, required=False,
                         help="Batch size for training.")
     parser.add_argument('--resume', type=str, required=False,
                         default="none",
@@ -38,9 +38,13 @@ def parse_args():
                         help="Interval (in epochs) to save model checkpoints.")
     parser.add_argument('--num_workers', type=int, default=8, required=False,
                         help="Number of worker processes for data loading.")
+    parser.add_argument('--modality', type=str, default='multimodal',
+                        choices=['multimodal', 'unimodal'], required=False,
+                        help="Modality type. Use 'unimodal' for mvtecad/visa, "
+                             "'multimodal' for other datasets (default: multimodal).")
     parser.add_argument('--lr', type=float, default=1e-3, required=False,
                         help="Learning rate.")
-    parser.add_argument('--mode', type=str, default="eval", required=False,
+    parser.add_argument('--mode', type=str, default="train", required=False,
                         help="Running mode: 'train' or 'eval'.")
     parser.add_argument('--all_datasets_classes', type=list, default=datasets_classes["unidatasets"], required=False,
                         help="List of dataset class names (default from datasets_classes['unidatasets']).")

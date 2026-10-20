@@ -94,7 +94,7 @@ class Pretrain_Encoder(nn.Module):
 class UniMMAD(object):
     def __init__(self, args):
         super(UniMMAD, self).__init__()
-
+        self.modality = args['modality']
         self.piror_generator = Pretrain_Encoder()
         self.piror_generator = self.piror_generator.cuda()
         self.piror_generator.eval()
@@ -187,13 +187,11 @@ class UniMMAD(object):
                                            amap_mode='add', gaussian_sigma=4)
         out_mask_sm = torch.from_numpy(anomaly_map)
         return image, out_mask_sm
-    def merge_feature(self,share_out,specimgs_out,B,cumindex):
+    
+    def merge_feature(self,share_out,specimgs_out,B):
         auxinp = []
         for layer in range(3):
-            aux = [specimgs_out[layer][cumindex[i]:cumindex[i + 1]].mean(0, keepdim=True) for i in range(B)]
-            auxinp.append(torch.cat(aux))
-        # share_out[0] =share_out[0]+auxinp[0]
-        # share_out = [s + a for s, a in zip(share_out, auxinp)]
+            share_out[layer] = specimgs_out[layer]+share_out[layer]
         return share_out
     def forward_step(self, batch, train=False, **kwargs):
 
@@ -212,8 +210,9 @@ class UniMMAD(object):
 
         share_out = self.input_embedding(share_img)
         enc = self.general_multimodal_encoder[0](share_out)
-        #add inter-modal piror averages
-        # enc = self.merge_feature(enc,specimgs_out,B,cumindex)
+        #add unimodal piror averages
+        if self.modality == 'unimodal':
+            enc = self.merge_feature(enc,specimgs_out,B)
         share_out, loss = self.general_multimodal_encoder[1](enc)
         share_out = [F.normalize(tensor, p=2, dim=1) for tensor in share_out]
         specimgs_out = [F.normalize(tensor, p=2, dim=1) for tensor in specimgs_out]
